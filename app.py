@@ -280,6 +280,8 @@ def get_feature_importance() -> list[dict[str, Any]]:
     return json.loads(importance.to_json(orient="records"))
 
 
+app = create_app()
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-    create_app().run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

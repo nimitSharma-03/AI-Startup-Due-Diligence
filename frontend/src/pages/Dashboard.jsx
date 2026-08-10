@@ -9,15 +9,35 @@ import RiskGauge from '../components/RiskGauge'
 import UploadCard from '../components/UploadCard'
 import { generateDueDiligenceReport, getDashboardData, getReportCompanies, predictStartup } from '../services/api'
 
+function getInitialForm(modelInfo) {
+  const features = Array.isArray(modelInfo?.features) ? modelInfo.features : []
+  const sampleInput = modelInfo?.sample_input
+  const hasSampleInput = sampleInput && typeof sampleInput === 'object' && !Array.isArray(sampleInput)
+
+  return Object.fromEntries(
+    features
+      .filter((feature) => feature !== 'Fate')
+      .map((feature) => [feature, hasSampleInput ? (sampleInput[feature] ?? '') : '']),
+  )
+}
+
 function Dashboard() {
   const [data, setData] = useState(null); const [form, setForm] = useState({}); const [prediction, setPrediction] = useState(null)
   const [reportUrl, setReportUrl] = useState(null); const [reportName, setReportName] = useState('ai_startup_due_diligence_report.pdf')
   const [companies, setCompanies] = useState([]); const [selectedRow, setSelectedRow] = useState(null)
   const [loading, setLoading] = useState(true); const [predicting, setPredicting] = useState(false); const [toast, setToast] = useState(null)
   const notify = useCallback((message, type = 'success') => { setToast({ message, type }); window.setTimeout(() => setToast(null), 4500) }, [])
-  const load = useCallback(async () => { setLoading(true); try { const next = await getDashboardData(); setData(next); setForm(next.modelInfo.sample_input || {}) } catch (error) { notify(error.message, 'error') } finally { setLoading(false) } }, [notify])
+  const load = useCallback(async () => { setLoading(true); try { const next = await getDashboardData(); setData(next); setForm(getInitialForm(next.modelInfo)) } catch (error) { notify(error.message, 'error') } finally { setLoading(false) } }, [notify])
   useEffect(() => { void load(); return () => { if (reportUrl) URL.revokeObjectURL(reportUrl) } }, [load])
-  const runSingle = async () => { setPredicting(true); try { const next = await predictStartup(form); setPrediction(next); notify('Prediction completed.') } catch (error) { notify(error.message, 'error') } finally { setPredicting(false) } }
+  const runSingle = async () => {
+    const features = Array.isArray(data?.modelInfo?.features) ? data.modelInfo.features : []
+    const featureValues = Object.fromEntries(features.filter((feature) => feature !== 'Fate').map((feature) => [feature, form?.[feature] ?? '']))
+    if (Object.keys(featureValues).length === 0) {
+      notify('Startup data is not loaded. Please retry the backend connection.', 'error')
+      return
+    }
+    setPredicting(true); try { const next = await predictStartup(featureValues); setPrediction(next); notify('Prediction completed.') } catch (error) { notify(error.message, 'error') } finally { setPredicting(false) }
+  }
   const loadCompanies = async (file) => { setPredicting(true); setCompanies([]); setSelectedRow(null); if (reportUrl) { URL.revokeObjectURL(reportUrl); setReportUrl(null) } try { const result = await getReportCompanies(file); setCompanies(result.companies); notify(`Choose one of ${result.companies.length} companies to generate a report.`) } catch (error) { notify(error.message, 'error') } finally { setPredicting(false) } }
   const runReport = async (file, rowIndex) => { setPredicting(true); try { if (reportUrl) URL.revokeObjectURL(reportUrl); const response = await generateDueDiligenceReport(file, rowIndex); setReportUrl(URL.createObjectURL(response.data)); const disposition = response.headers['content-disposition'] || ''; const match = disposition.match(/filename="?([^";]+)"?/); setReportName(match?.[1] || 'ai_startup_due_diligence_report.pdf'); notify('Selected-company PDF due diligence report generated.') } catch (error) { notify(error.message, 'error') } finally { setPredicting(false) } }
   const download = () => { if (!reportUrl) return; const link = document.createElement('a'); link.href = reportUrl; link.download = reportName; link.click() }

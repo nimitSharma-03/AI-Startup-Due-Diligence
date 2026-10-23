@@ -1,0 +1,86 @@
+{
+  "model_name": "Calibrated Random Forest (startup outcome classifier)",
+  "algorithm": "RandomForestClassifier(class_weight='balanced_subsample') + CalibratedClassifierCV(sigmoid, 5-fold)",
+  "target": "Fate - recorded company status at data collection: Operating, Exited (acquired/IPO), Dead",
+  "classes": [
+    "Dead",
+    "Exited",
+    "Operating"
+  ],
+  "class_priors": {
+    "Dead": 0.1379,
+    "Exited": 0.1298,
+    "Operating": 0.7323
+  },
+  "decision_rule": "balanced: argmax_k P(k|x) / prior(k)",
+  "input_columns": [
+    "year",
+    "session",
+    "total_funding",
+    "city",
+    "markets"
+  ],
+  "engineered_features": [
+    "yc_year",
+    "session_summer",
+    "session_unknown",
+    "log_funding",
+    "funding_missing",
+    "city_mountain_view",
+    "city_new_york_city",
+    "city_palo_alto",
+    "city_san_francisco",
+    "city_other",
+    "city_unknown",
+    "market_advertising",
+    "market_analytics",
+    "market_big_data",
+    "market_cloud_computing",
+    "market_curated_web",
+    "market_e_commerce",
+    "market_enterprise_software",
+    "market_finance",
+    "market_games",
+    "market_hardware_software",
+    "market_messaging",
+    "market_mobile",
+    "market_music",
+    "market_saas",
+    "market_social_media",
+    "market_software",
+    "market_video"
+  ],
+  "excluded_columns": {
+    "Unnamed: 0": "row index from an earlier export; ordered in a way that correlates with outcome",
+    "Company": "identifier, not a predictive attribute",
+    "Description": "free text; not used by this model",
+    "Logo": "URL that tends to disappear when a company shuts down (outcome leakage)",
+    "Website": "URL that tends to disappear when a company shuts down (outcome leakage)",
+    "SeedDBMattermarkProfile": "profile URL, identifier only",
+    "CrunchBaseAngelListProfile": "profile URL, identifier only",
+    "Founders1-4": "listing completeness depends on how well a company is documented after the fact",
+    "Investors1-4": "listing completeness depends on how well a company is documented after the fact"
+  },
+  "hyperparameters": {
+    "max_depth": 6,
+    "min_samples_leaf": 3,
+    "n_estimators": 300,
+    "class_weight": "balanced_subsample",
+    "random_state": 42
+  },
+  "grid_search_best_cv_roc_auc": 0.83,
+  "train_rows": 493,
+  "test_rows": 124,
+  "random_state": 42,
+  "dataset": {
+    "path": "data/CleanStartups.csv",
+    "sha256": "469d46492eb641f01c1e3f1a1d6dfda0b8b9ea43fef26385fd43362e95772034"
+  },
+  "trained_at": "2026-10-23T08:58:22+00:00",
+  "versions": {
+    "python": "3.13.16",
+    "scikit_learn": "1.9.1",
+    "pandas": "3.1.0",
+    "numpy": "2.5.4"
+  }
+}

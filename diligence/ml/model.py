@@ -137,14 +137,21 @@ class ModelService:
         """
         if self._background is None:
             raise ModelUnavailable("Explanation background has not been initialised.")
-        base = self.probabilities([model_input])[0]
         record = self.to_frame([model_input])
         background = self._background
-        contributions = []
+        size = len(background)
+        # One batched call (record + one block per field) is much faster than
+        # a predict_proba call per field on small CPU allocations.
+        blocks = [record]
         for field in MODEL_COLUMNS:
-            perturbed = pd.concat([record] * len(background), ignore_index=True)
+            perturbed = pd.concat([record] * size, ignore_index=True)
             perturbed[field] = background[field].to_numpy()
-            average = self.pipeline.predict_proba(perturbed).mean(axis=0)
+            blocks.append(perturbed)
+        probabilities = self.pipeline.predict_proba(pd.concat(blocks, ignore_index=True))
+        base = probabilities[0]
+        contributions = []
+        for index, field in enumerate(MODEL_COLUMNS):
+            average = probabilities[1 + index * size : 1 + (index + 1) * size].mean(axis=0)
             delta = base - average
             contributions.append(
                 {

@@ -53,7 +53,11 @@ def funding_bucket(amount: float) -> str:
     return "> $100M"
 
 
+DISPLAY_ORDER = ["Operating", "Exited", "Dead"]
+
+
 def dashboard(dataset: Dataset, classes: list[str]) -> dict[str, Any]:
+    classes = [label for label in DISPLAY_ORDER if label in classes]
     records = dataset.records
     scored = dataset.scored
     funding = [r["total_funding"] for r in records if isinstance(r.get("total_funding"), (int, float))]

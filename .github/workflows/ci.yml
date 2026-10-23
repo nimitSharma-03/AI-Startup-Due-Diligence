@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Run the end-to-end suite against this deployed URL instead of a local server
+        required: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install Python dependencies
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements-dev.txt
+      - name: Backend tests
+        run: .venv/bin/python -m pytest
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Lint and unit tests
+        working-directory: frontend
+        run: |
+          npm run lint
+          npm test
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+      - name: End-to-end tests
+        working-directory: frontend
+        env:
+          CI: "true"
+          E2E_BASE_URL: ${{ github.event.inputs.base_url }}
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test

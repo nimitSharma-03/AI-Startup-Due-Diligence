@@ -1,4 +1,0 @@
-import { BarChart3, Database, Gauge, Target } from 'lucide-react'
-const items = (modelInfo, metrics) => [{ label: 'Training samples', value: modelInfo?.training_samples ?? '—', icon: Database }, { label: 'Model accuracy', value: metrics?.accuracy ? `${(metrics.accuracy * 100).toFixed(1)}%` : '—', icon: Target }, { label: 'Features analyzed', value: modelInfo?.number_of_features ?? '—', icon: BarChart3 }, { label: 'ROC-AUC', value: metrics?.roc_auc?.toFixed(3) ?? '—', icon: Gauge }]
-function Statistics({ modelInfo, metrics }) { return <section className="stats">{items(modelInfo, metrics).map(({ label, value, icon: Icon }) => <div className="stat glass" key={label}><Icon className="stat-icon" size={17} /><div className="stat-label">{label}</div><div className="stat-value">{value}</div></div>)}</section> }
-export default Statistics

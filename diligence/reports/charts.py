@@ -15,7 +15,7 @@ NAVY = "#0B1F3A"
 TEAL = "#0F766E"
 GREY = "#94A3B8"
 INK = "#1E293B"
-OUTCOME_COLORS = {"Operating": "#2563EB", "Exited": "#0F766E", "Dead": "#B91C1C"}
+OUTCOME_COLORS = {"Operating": "#2a78d6", "Exited": "#1baf7a", "Dead": "#eb6834"}
 
 
 def _style(ax) -> None:

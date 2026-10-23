@@ -1,5 +1,18 @@
 # Deployment
 
+## Live deployment
+
+- App: https://ai-startup-due-diligence-platform-0u70.onrender.com
+- Health: https://ai-startup-due-diligence-platform-0u70.onrender.com/api/health
+- Render service: `ai-startup-due-diligence-platform` (Docker, free plan, Oregon), auto-deploying from `main`.
+- Verified on 23 Oct 2026:
+  - **Build and deploy.** Render reported `build_ended: succeeded` and `deploy_ended: succeeded`.
+  - **Start-up.** The logs show `Loaded model ... and 617 reference startups`, with no warnings or errors.
+  - **Live tests.** The CI `workflow_dispatch` run with `base_url` set to the live URL passed all 11 Playwright tests.
+  - **PDF timing.** Generating a report on the live instance took 4.9–6.6 s.
+
+To re-verify, open Actions → CI → Run workflow and set `base_url` to the live URL.
+
 ## Architecture on Render
 
 The app runs as **one Docker web service** on Render's free plan:

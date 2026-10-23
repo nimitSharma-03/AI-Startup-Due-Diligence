@@ -42,7 +42,7 @@ Dataset facts (data/CleanStartups.csv)
 4. [x] React frontend: overview, explorer, detail, predict, upload, model analytics, reports, methodology; responsive.
 5. [x] Tests: 50 pytest, 15 Vitest, 11 Playwright end-to-end (local production stack), all passing.
 6. [x] Docs, cleanup, Dockerfile, render.yaml, CI.
-7. [ ] Merge to main, create the Render Docker service, verify the live deployment, add the URL to the README.
+7. [x] Merged PR #1 into main; created the Render Docker service; verified it live with the E2E suite on GitHub Actions: https://ai-startup-due-diligence-platform-0u70.onrender.com
 
 Notes
 - The Docker image was built and run locally under free-tier limits (512 MB, 0.1 CPU): healthy in about 8 s,

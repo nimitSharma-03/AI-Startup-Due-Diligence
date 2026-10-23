@@ -35,10 +35,17 @@ Dataset facts (data/CleanStartups.csv)
 
 ## Plan and status
 
-1. [ ] Reproducible ML pipeline: sklearn Pipeline with a custom feature builder, leakage-free features,
-       stratified hold-out plus repeated CV, baselines, calibration check, permutation importance.
-2. [ ] Modular Flask API under `/api`, upload store, analytics, validation, errors, logging.
-3. [ ] PDF reports generated per company in memory, factual narratives, disclosures.
-4. [ ] React frontend: overview, explorer, detail, predict, upload, analytics, reports, methodology.
-5. [ ] Tests: pytest, vitest, Playwright end-to-end.
-6. [ ] Docs, cleanup, Dockerfile/render.yaml, deploy to Render, verify.
+1. [x] Reproducible ML pipeline: custom transformer + class-weighted Random Forest + sigmoid calibration,
+       stratified hold-out, repeated CV, four baselines, permutation importance, year-confound check.
+2. [x] Modular Flask API under `/api`: in-memory upload store, analytics, validation, JSON errors, logging, security headers.
+3. [x] Company-specific PDF reports built in memory; deterministic narratives; disclosures. Verified for 4+ companies.
+4. [x] React frontend: overview, explorer, detail, predict, upload, model analytics, reports, methodology; responsive.
+5. [x] Tests: 50 pytest, 15 Vitest, 11 Playwright end-to-end (local production stack), all passing.
+6. [x] Docs, cleanup, Dockerfile, render.yaml, CI.
+7. [ ] Merge to main, create the Render Docker service, verify the live deployment, add the URL to the README.
+
+Notes
+- The Docker image was built and run locally under free-tier limits (512 MB, 0.1 CPU): healthy in about 8 s,
+  about 190 MB RSS, PDFs in about 10–14 s.
+- This sandbox cannot reach *.onrender.com directly. Live verification uses Render logs/events and the
+  GitHub Actions workflow (`workflow_dispatch` with `base_url`).

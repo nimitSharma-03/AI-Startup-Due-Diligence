@@ -239,8 +239,10 @@ def analyse(record: dict[str, Any], stats: ReferenceStats, dataset_kind: str) ->
         )
     if record.get("founders"):
         considerations.append("Run background and reference checks on the listed founders.")
-    else:
+    elif dataset_kind != "input":
         considerations.append("Identify the founding and management team; no founders are recorded.")
+    else:
+        considerations.append("Assess the founding and management team, which this model does not consider.")
 
     return {
         "strengths": strengths,
@@ -278,7 +280,8 @@ def executive_summary(record: dict[str, Any], insight: dict[str, Any], stats: Re
     if status:
         dataset_facts.append(f"a recorded status of {status}")
     if dataset_facts:
-        paragraphs.append("The dataset reports " + " and ".join(dataset_facts) + ".")
+        source = "The submitted data reports " if dataset_kind == "input" else "The dataset reports "
+        paragraphs.append(source + " and ".join(dataset_facts) + ".")
 
     prediction = record.get("prediction")
     if prediction:

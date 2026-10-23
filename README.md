@@ -8,7 +8,8 @@ A full-stack machine-learning application for screening startups. It covers:
 - uploading your own CSV portfolio;
 - downloading a company-specific PDF due-diligence report.
 
-> **Live demo:** _added after deployment verification (see [Deployment](#deployment))_
+> **Live demo:** [ai-startup-due-diligence-platform-0u70.onrender.com](https://ai-startup-due-diligence-platform-0u70.onrender.com). API health: [`/api/health`](https://ai-startup-due-diligence-platform-0u70.onrender.com/api/health).
+> It runs on Render's free plan, so the first request after idle time can take up to a minute while the instance wakes.
 >
 > Educational and analytical project. It is not investment advice and not a regulated advisory service.
 
@@ -196,7 +197,13 @@ The test inventory is in [docs/TESTING.md](docs/TESTING.md). CI runs all of it o
 ## Deployment
 
 The app is deployed as a single Docker web service on Render's free plan, defined in
-[`render.yaml`](render.yaml) and [`Dockerfile`](Dockerfile). Health check: `/api/health`.
+[`render.yaml`](render.yaml) and [`Dockerfile`](Dockerfile).
+
+- **Live app:** https://ai-startup-due-diligence-platform-0u70.onrender.com
+- **API base:** https://ai-startup-due-diligence-platform-0u70.onrender.com/api (health check at `/api/health`)
+- **Verification:** the full Playwright suite (11 tests) passed against the live URL in the
+  `workflow_dispatch` CI run on `main` (run 39933418948), on its first attempt. Render's request logs
+  for that run show company PDFs, uploads and predictions being served by the deployed service.
 Configuration and free-tier behaviour are covered in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Limitations and future work
